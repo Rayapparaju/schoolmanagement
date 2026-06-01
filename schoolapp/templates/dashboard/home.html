@@ -1,0 +1,256 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <h4 class="fw-bold mb-1">Dashboard</h4>
+        <p class="text-muted mb-0">Welcome back, {{ user.username }}! Here's what's happening.</p>
+    </div>
+    <div>
+        <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>{% now "F j, Y" %}</span>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-gradient-blue" data-aos="fade-up">
+            <div class="stat-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="counter">{{ total_students }}</h3>
+                <p>Total Students</p>
+            </div>
+            <div class="stat-trend up">
+                <i class="bi bi-arrow-up"></i> 12%
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-gradient-green" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon">
+                <i class="bi bi-person-video3"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="counter">{{ total_teachers }}</h3>
+                <p>Total Teachers</p>
+            </div>
+            <div class="stat-trend up">
+                <i class="bi bi-arrow-up"></i> 5%
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-gradient-orange" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon">
+                <i class="bi bi-building"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="counter">{{ total_classes }}</h3>
+                <p>Total Classes</p>
+            </div>
+            <div class="stat-trend">
+                <i class="bi bi-dot"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card bg-gradient-purple" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon">
+                <i class="bi bi-book-fill"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="counter">{{ total_subjects }}</h3>
+                <p>Total Subjects</p>
+            </div>
+            <div class="stat-trend">
+                <i class="bi bi-dot"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts & Recent Data -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="card dashboard-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>School Overview</h5>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Weekly</button>
+                    <button class="btn btn-outline-primary">Monthly</button>
+                    <button class="btn btn-outline-primary">Yearly</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="overviewChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-pie-chart me-2"></i>Gender Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="genderChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-cash-stack me-2"></i>Fee Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-around text-center mb-4">
+                    <div>
+                        <h4 class="text-success fw-bold">₹{{ total_fees|floatformat:0 }}</h4>
+                        <small class="text-muted">Collected</small>
+                    </div>
+                    <div>
+                        <h4 class="text-warning fw-bold">{{ pending_fees }}</h4>
+                        <small class="text-muted">Pending</small>
+                    </div>
+                </div>
+                <canvas id="feeChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Recent Admissions</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for student in recent_admissions %}
+                    <div class="list-group-item d-flex align-items-center py-3">
+                        <div class="avatar-sm me-3">{{ student.first_name|first }}{{ student.last_name|first }}</div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ student.first_name }} {{ student.last_name }}</h6>
+                            <small class="text-muted">{{ student.admission_number }} • {{ student.student_class }}</small>
+                        </div>
+                        <small class="text-muted">{{ student.created_at|date:"d M" }}</small>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4 text-muted">No recent admissions</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>Recent Fee Transactions</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for fee in recent_fees %}
+                    <div class="list-group-item d-flex align-items-center py-3">
+                        <div class="fee-status me-3">
+                            <span class="badge bg-{% if fee.status == 'Paid' %}success{% elif fee.status == 'Partial' %}warning{% else %}danger{% endif %}">
+                                {{ fee.status }}
+                            </span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ fee.student.first_name }} {{ fee.student.last_name }}</h6>
+                            <small class="text-muted">₹{{ fee.paid_amount }} / ₹{{ fee.total_amount }}</small>
+                        </div>
+                        <small class="text-muted">{{ fee.payment_date|date:"d M"|default:"N/A" }}</small>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4 text-muted">No fee records</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Overview Chart
+const ctxOverview = document.getElementById('overviewChart').getContext('2d');
+new Chart(ctxOverview, {
+    type: 'bar',
+    data: {
+        labels: ['Students', 'Teachers', 'Classes', 'Subjects'],
+        datasets: [{
+            label: 'Count',
+            data: [{{ total_students }}, {{ total_teachers }}, {{ total_classes }}, {{ total_subjects }}],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(153, 102, 255, 0.8)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 2,
+            borderRadius: 8,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } }
+    }
+});
+
+// Gender Chart
+const genderCtx = document.getElementById('genderChart').getContext('2d');
+new Chart(genderCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Male', 'Female', 'Other'],
+        datasets: [{
+            data: [
+                {% for g in gender_distribution %}{% if g.gender == 'Male' %}{{ g.count }}{% endif %}{% endfor %},
+                {% for g in gender_distribution %}{% if g.gender == 'Female' %}{{ g.count }}{% endif %}{% endfor %},
+                {% for g in gender_distribution %}{% if g.gender == 'Other' %}{{ g.count }}{% endif %}{% endfor %}
+            ],
+            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
+            borderWidth: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        cutout: '70%',
+    }
+});
+
+// Fee Chart
+const feeCtx = document.getElementById('feeChart').getContext('2d');
+new Chart(feeCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Collected', 'Pending'],
+        datasets: [{
+            data: [{{ total_fees|floatformat:0 }}, {{ pending_fees }}],
+            backgroundColor: ['#28a745', '#ffc107'],
+            borderWidth: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        cutout: '60%',
+    }
+});
+</script>
+{% endblock %}

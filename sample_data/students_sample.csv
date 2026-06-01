@@ -1,0 +1,4 @@
+admission_number,first_name,last_name,gender,date_of_birth,student_class,parent_name,parent_phone,address,phone,email
+S001,John,Doe,Male,2010-05-15,Class 5,Jane Doe,+1234567890,123 Main St,+1234567890,john.doe@example.com
+S002,Jane,Smith,Female,2011-08-22,Class 4,Robert Smith,+1234567891,456 Oak Ave,+1234567891,jane.smith@example.com
+S003,Mike,Johnson,Male,2009-12-10,Class 6,Sarah Johnson,+1234567892,789 Pine Rd,+1234567892,mike.j@example.com

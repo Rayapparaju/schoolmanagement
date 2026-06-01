@@ -1,0 +1,4 @@
+admission_number,total_amount,paid_amount,payment_date
+S001,5000,5000,2024-01-15
+S002,4500,3000,2024-01-20
+S003,5500,2000,2024-02-01

@@ -1,0 +1,71 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{{ teacher.first_name }} {{ teacher.last_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+    <a href="{% url 'teacher_list' %}" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
+    <div>
+        <h4 class="fw-bold mb-1">Teacher Profile</h4>
+        <p class="text-muted mb-0">{{ teacher.email }}</p>
+    </div>
+    <div class="ms-auto">
+        <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+        <a href="{% url 'teacher_delete' teacher.pk %}" class="btn btn-outline-danger" onclick="return confirm('Delete this teacher?')"><i class="bi bi-trash me-1"></i>Delete</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card dashboard-card text-center">
+            <div class="card-body">
+                {% if teacher.photo %}
+                <img src="{{ teacher.photo.url }}" class="rounded-circle mb-3" width="120" height="120" style="object-fit:cover;">
+                {% else %}
+                <div class="avatar-lg mx-auto mb-3">{{ teacher.first_name|first }}{{ teacher.last_name|first }}</div>
+                {% endif %}
+                <h5 class="fw-bold">{{ teacher.first_name }} {{ teacher.last_name }}</h5>
+                <span class="badge bg-success mb-3">Teacher</span>
+                <hr>
+                <div class="text-start small">
+                    <p class="mb-2"><i class="bi bi-telephone me-2"></i><strong>Phone:</strong> {{ teacher.phone }}</p>
+                    <p class="mb-2"><i class="bi bi-envelope me-2"></i><strong>Email:</strong> {{ teacher.email }}</p>
+                    <p class="mb-2"><i class="bi bi-calendar me-2"></i><strong>Joined:</strong> {{ teacher.joining_date }}</p>
+                    <p class="mb-0"><i class="bi bi-geo me-2"></i><strong>Address:</strong> {{ teacher.address }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card dashboard-card">
+            <div class="card-header"><h5 class="mb-0 fw-bold"><i class="bi bi-book-fill me-2"></i>Subjects Taught</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for subject in teacher.subjects.all %}
+                    <div class="col-md-4">
+                        <div class="subject-card"><i class="bi bi-book text-primary"></i> {{ subject.name }}<br><small class="text-muted">{{ subject.student_class }}</small></div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center text-muted py-4">No subjects assigned</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="card dashboard-card mt-4">
+            <div class="card-header"><h5 class="mb-0 fw-bold"><i class="bi bi-building me-2"></i>Classes Teaching</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for cls in teacher.classes.all %}
+                    <div class="col-md-4">
+                        <div class="subject-card"><i class="bi bi-building text-success"></i> {{ cls.name }}<br><small class="text-muted">Section: {{ cls.section }}</small></div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center text-muted py-4">No classes assigned</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

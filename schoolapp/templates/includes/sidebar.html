@@ -1,0 +1,94 @@
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'dashboard_home' %}" class="sidebar-brand">
+            <i class="bi bi-mortarboard-fill"></i>
+            <span>SchoolMS</span>
+        </a>
+        <button class="sidebar-toggle d-lg-none" onclick="toggleSidebar()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <div class="sidebar-user">
+        <div class="avatar">{{ user.username|first|upper }}</div>
+        <div class="user-info">
+            <span class="user-name">{{ user.username }}</span>
+            <span class="user-role">Administrator</span>
+        </div>
+    </div>
+    <ul class="sidebar-nav">
+        <li class="nav-item">
+            <a href="{% url 'dashboard_home' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-divider">Management</li>
+        <li class="nav-item">
+            <a href="{% url 'student_list' %}" class="nav-link {% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-people-fill"></i>
+                <span>Students</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'teacher_list' %}" class="nav-link {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-person-video3"></i>
+                <span>Teachers</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'class_list' %}" class="nav-link {% if 'class' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-building"></i>
+                <span>Classes</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'subject_list' %}" class="nav-link {% if 'subject' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-book-fill"></i>
+                <span>Subjects</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'attendance_list' %}" class="nav-link {% if 'attendance' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'fee_list' %}" class="nav-link {% if 'fee' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-cash-stack"></i>
+                <span>Fees</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'exam_list' %}" class="nav-link {% if 'exam' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-trophy"></i>
+                <span>Exams & Results</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'notice_list' %}" class="nav-link {% if 'notice' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-megaphone"></i>
+                <span>Notices</span>
+            </a>
+        </li>
+        <li class="nav-divider">Settings</li>
+        <li class="nav-item">
+            <a href="{% url 'import_data' %}" class="nav-link {% if 'import' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-upload"></i>
+                <span>Import Data</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/" class="nav-link" target="_blank">
+                <i class="bi bi-gear"></i>
+                <span>Django Admin</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>

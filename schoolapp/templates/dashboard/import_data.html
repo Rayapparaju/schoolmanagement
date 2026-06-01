@@ -1,0 +1,128 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Import Data{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Import Data</h4>
+        <p class="text-muted mb-0">Import previous school data from CSV or Excel files</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2"></i>Upload File</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Data Type</label>
+                        {{ form.model_choice }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">CSV / Excel File</label>
+                        {{ form.csv_file }}
+                        <small class="text-muted">Supported: .csv, .xlsx</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-upload me-2"></i>Import Data
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-files me-2"></i>Sample CSV Formats</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Download sample CSV files to see the required format for each data type.</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="sample-card" onclick="window.location.href='{% url 'download_sample_csv' 'Student' %}'">
+                            <i class="bi bi-people-fill text-primary fs-1"></i>
+                            <div>
+                                <h6 class="mb-1">Students</h6>
+                                <small class="text-muted">admission_number, name, email, class, etc.</small>
+                            </div>
+                            <i class="bi bi-download ms-auto fs-5 text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="sample-card" onclick="window.location.href='{% url 'download_sample_csv' 'Teacher' %}'">
+                            <i class="bi bi-person-video3 text-success fs-1"></i>
+                            <div>
+                                <h6 class="mb-1">Teachers</h6>
+                                <small class="text-muted">name, email, phone, joining date, etc.</small>
+                            </div>
+                            <i class="bi bi-download ms-auto fs-5 text-success"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="sample-card" onclick="window.location.href='{% url 'download_sample_csv' 'Fee' %}'">
+                            <i class="bi bi-cash-stack text-warning fs-1"></i>
+                            <div>
+                                <h6 class="mb-1">Fees</h6>
+                                <small class="text-muted">admission_number, amount, paid, etc.</small>
+                            </div>
+                            <i class="bi bi-download ms-auto fs-5 text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="sample-card" onclick="window.location.href='{% url 'download_sample_csv' 'Subject' %}'">
+                            <i class="bi bi-book-fill text-info fs-1"></i>
+                            <div>
+                                <h6 class="mb-1">Subjects</h6>
+                                <small class="text-muted">name, class, teacher email, etc.</small>
+                            </div>
+                            <i class="bi bi-download ms-auto fs-5 text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Import Instructions</h5>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li>Select the data type you want to import (Students, Teachers, Fees, or Subjects).</li>
+                    <li>Download the corresponding sample CSV file to see the required column headers.</li>
+                    <li>Prepare your data file following the same column format as the sample.</li>
+                    <li>Upload your CSV/Excel file using the form on the left.</li>
+                    <li>The system will validate and import the data automatically.</li>
+                    <li>Check the dashboard to verify the imported data.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sample-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.sample-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+</style>
+{% endblock %}

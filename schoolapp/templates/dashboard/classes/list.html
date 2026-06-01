@@ -1,0 +1,44 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Classes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="bi bi-building me-2"></i>Classes</h4>
+        <p class="text-muted mb-0">Manage school classes and sections</p>
+    </div>
+    <a href="{% url 'class_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Class</a>
+</div>
+
+<div class="row g-4">
+    {% for class in classes %}
+    <div class="col-md-6 col-lg-3">
+        <div class="class-card">
+            <div class="class-header">{{ class.name }} <span class="section-badge">{{ class.section }}</span></div>
+            <div class="class-body">
+                <div class="class-info">
+                    <i class="bi bi-person-video3"></i>
+                    <span>{{ class.class_teacher|default:"No teacher" }}</span>
+                </div>
+                <div class="class-info">
+                    <i class="bi bi-people-fill"></i>
+                    <span>{{ class.students.count }} Students</span>
+                </div>
+                <div class="class-info">
+                    <i class="bi bi-book-fill"></i>
+                    <span>{{ class.subjects.count }} Subjects</span>
+                </div>
+            </div>
+            <div class="class-footer">
+                <a href="{% url 'class_edit' class.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'class_delete' class.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this class?')"><i class="bi bi-trash"></i></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted"><i class="bi bi-building fs-1 d-block mb-2"></i>No classes found. <a href="{% url 'class_add' %}">Add one now</a></div>
+    {% endfor %}
+</div>
+{% endblock %}

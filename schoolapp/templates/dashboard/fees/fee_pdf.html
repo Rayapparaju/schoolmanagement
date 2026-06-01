@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fee Report - {{ student.first_name }} {{ student.last_name }}</title>
+    <style>
+        @page { size: A4; margin: 20mm; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12px; color: #333; line-height: 1.5; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #4f46e5; padding-bottom: 15px; }
+        .header h1 { font-size: 22px; color: #4f46e5; margin: 0 0 5px; }
+        .header p { margin: 2px 0; color: #666; font-size: 11px; }
+        .school-name { font-size: 16px; font-weight: bold; color: #1e293b; }
+        .student-info { margin-bottom: 25px; }
+        .student-info table { width: 100%; border-collapse: collapse; }
+        .student-info td { padding: 4px 8px; font-size: 12px; }
+        .student-info td:first-child { font-weight: bold; width: 140px; color: #555; }
+        .summary { display: flex; justify-content: space-between; margin-bottom: 25px; }
+        .summary-box { flex: 1; text-align: center; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin: 0 5px; }
+        .summary-box h3 { margin: 0; font-size: 18px; color: #4f46e5; }
+        .summary-box p { margin: 3px 0 0; font-size: 10px; color: #888; }
+        table.items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table.items th { background: #4f46e5; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; }
+        table.items td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 11px; }
+        table.items tr:nth-child(even) { background: #f8fafc; }
+        .status-paid { color: #10b981; font-weight: bold; }
+        .status-partial { color: #f59e0b; font-weight: bold; }
+        .status-unpaid { color: #ef4444; font-weight: bold; }
+        .footer { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 10px; color: #999; }
+        .total-row td { font-weight: bold; background: #f1f5f9; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="school-name">School Management System</div>
+        <h1>Fee Statement</h1>
+        <p>Generated on: {% now "F d, Y" %}</p>
+    </div>
+
+    <div class="student-info">
+        <table>
+            <tr><td>Student Name</td><td>{{ student.first_name }} {{ student.last_name }}</td></tr>
+            <tr><td>Admission No</td><td>{{ student.admission_number }}</td></tr>
+            <tr><td>Class</td><td>{{ student.student_class|default:"-" }}</td></tr>
+            <tr><td>Parent Name</td><td>{{ student.parent_name }}</td></tr>
+            <tr><td>Parent Phone</td><td>{{ student.parent_phone }}</td></tr>
+            <tr><td>Email</td><td>{{ student.email }}</td></tr>
+            <tr><td>Phone</td><td>{{ student.phone }}</td></tr>
+            <tr><td>Address</td><td>{{ student.address }}</td></tr>
+        </table>
+    </div>
+
+    <div class="summary">
+        <div class="summary-box">
+            <h3>₹{{ total_paid|floatformat:2 }}</h3>
+            <p>Total Paid</p>
+        </div>
+        <div class="summary-box">
+            <h3>₹{{ total_due|floatformat:2 }}</h3>
+            <p>Total Due</p>
+        </div>
+        <div class="summary-box">
+            <h3>{{ fees|length }}</h3>
+            <p>Records</p>
+        </div>
+    </div>
+
+    <table class="items">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Total Amount</th>
+                <th>Paid Amount</th>
+                <th>Due Amount</th>
+                <th>Status</th>
+                <th>Payment Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fee in fees %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>₹{{ fee.total_amount }}</td>
+                <td>₹{{ fee.paid_amount }}</td>
+                <td>₹{{ fee.due_amount }}</td>
+                <td class="status-{{ fee.status|lower }}">{{ fee.status }}</td>
+                <td>{{ fee.payment_date|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;padding:20px;color:#999;">No fee records found</td></tr>
+            {% endfor %}
+            {% if fees %}
+            <tr class="total-row">
+                <td colspan="2" style="text-align:right;">Total</td>
+                <td>₹{{ total_paid|floatformat:2 }}</td>
+                <td>₹{{ total_due|floatformat:2 }}</td>
+                <td colspan="2"></td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>This is a computer-generated statement. No signature required.</p>
+        <p>&copy; {% now "Y" %} School Management System. All rights reserved.</p>
+    </div>
+</body>
+</html>

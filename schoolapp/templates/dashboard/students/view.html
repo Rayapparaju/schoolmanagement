@@ -1,0 +1,137 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{{ student.first_name }} {{ student.last_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+    <a href="{% url 'student_list' %}" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
+    <div>
+        <h4 class="fw-bold mb-1">Student Profile</h4>
+        <p class="text-muted mb-0">{{ student.admission_number }}</p>
+    </div>
+    <div class="ms-auto">
+        <a href="{% url 'student_edit' student.pk %}" class="btn btn-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+        <a href="{% url 'student_delete' student.pk %}" class="btn btn-outline-danger" onclick="return confirm('Delete this student?')"><i class="bi bi-trash me-1"></i>Delete</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card dashboard-card text-center">
+            <div class="card-body">
+                {% if student.photo %}
+                <img src="{{ student.photo.url }}" class="rounded-circle mb-3" width="120" height="120" style="object-fit:cover;">
+                {% else %}
+                <div class="avatar-lg mx-auto mb-3">{{ student.first_name|first }}{{ student.last_name|first }}</div>
+                {% endif %}
+                <h5 class="fw-bold">{{ student.first_name }} {{ student.last_name }}</h5>
+                <span class="badge bg-primary mb-3">{{ student.admission_number }}</span>
+                <hr>
+                <div class="text-start small">
+                    <p class="mb-2"><i class="bi bi-gender-ambiguous me-2"></i><strong>Gender:</strong> {{ student.gender }}</p>
+                    <p class="mb-2"><i class="bi bi-calendar me-2"></i><strong>DOB:</strong> {{ student.date_of_birth }}</p>
+                    <p class="mb-2"><i class="bi bi-building me-2"></i><strong>Class:</strong> {{ student.student_class|default:"Not assigned" }}</p>
+                    <p class="mb-2"><i class="bi bi-telephone me-2"></i><strong>Phone:</strong> {{ student.phone }}</p>
+                    <p class="mb-2"><i class="bi bi-envelope me-2"></i><strong>Email:</strong> {{ student.email }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card dashboard-card mt-4">
+            <div class="card-header"><h5 class="mb-0 fw-bold">Parent Details</h5></div>
+            <div class="card-body small">
+                <p class="mb-2"><strong>Name:</strong> {{ student.parent_name }}</p>
+                <p class="mb-2"><strong>Phone:</strong> {{ student.parent_phone }}</p>
+                <p class="mb-0"><strong>Address:</strong> {{ student.address }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card dashboard-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-cash-stack me-2"></i>Fee Records</h5>
+                <div class="d-flex gap-1">
+                    {% if student.parent_phone %}
+                    <a href="{% url 'send_fee_whatsapp' student.pk %}" class="btn btn-sm btn-success" target="_blank" title="Send to WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                    {% endif %}
+                    <a href="{% url 'student_fee_detail' student.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>View All</a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>
+                            {% for fee in fees %}
+                            <tr>
+                                <td>₹{{ fee.total_amount }}</td>
+                                <td>₹{{ fee.paid_amount }}</td>
+                                <td>₹{{ fee.due_amount }}</td>
+                                <td><span class="badge bg-{% if fee.status == 'Paid' %}success{% elif fee.status == 'Partial' %}warning{% else %}danger{% endif %}">{{ fee.status }}</span></td>
+                                <td>{{ fee.payment_date|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted py-3">No fee records</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-trophy me-2"></i>Exam Results</h5>
+                <div>
+                    {% if student.parent_phone %}
+                    <a href="{% url 'send_exam_whatsapp' student.pk %}" class="btn btn-sm btn-success" target="_blank" title="Send results to WhatsApp"><i class="bi bi-whatsapp me-1"></i>Send</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Exam</th><th>Subject</th><th>Marks</th><th>Grade</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for exam in exams %}
+                            <tr>
+                                <td>{{ exam.name }}</td>
+                                <td>{{ exam.subject }}</td>
+                                <td>{{ exam.marks }}</td>
+                                <td><strong>{{ exam.grade }}</strong></td>
+                                <td><span class="badge bg-{% if exam.result_status == 'Pass' %}success{% else %}danger{% endif %}">{{ exam.result_status }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted py-3">No exam records</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-check me-2"></i>Recent Attendance</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Date</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for record in attendance %}
+                            <tr>
+                                <td>{{ record.date }}</td>
+                                <td><span class="badge bg-{% if record.status == 'Present' %}success{% else %}danger{% endif %}">{{ record.status }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="2" class="text-center text-muted py-3">No attendance records</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

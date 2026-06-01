@@ -1,0 +1,73 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Students{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1"><i class="bi bi-people-fill me-2"></i>Students</h4>
+        <p class="text-muted mb-0">Manage all student records</p>
+    </div>
+    <a href="{% url 'student_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Student</a>
+</div>
+
+<div class="card dashboard-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Admission No</th>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Class</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td><span class="badge bg-light text-dark">{{ student.admission_number }}</span></td>
+                        <td>
+                            {% if student.photo %}
+                            <img src="{{ student.photo.url }}" class="rounded-circle" width="40" height="40" style="object-fit:cover;">
+                            {% else %}
+                            <div class="avatar-sm">{{ student.first_name|first }}{{ student.last_name|first }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'student_view' student.pk %}" class="text-decoration-none fw-medium">
+                                {{ student.first_name }} {{ student.last_name }}
+                            </a>
+                        </td>
+                        <td>{{ student.gender }}</td>
+                        <td>{{ student.student_class|default:"-" }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'student_view' student.pk %}" class="btn btn-outline-info" title="View"><i class="bi bi-eye"></i></a>
+                                <a href="{% url 'student_fee_detail' student.pk %}" class="btn btn-outline-warning" title="Fees"><i class="bi bi-cash-stack"></i></a>
+                                <a href="{% url 'student_edit' student.pk %}" class="btn btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'student_delete' student.pk %}" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this student?')"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-people-fill fs-1 d-block mb-2"></i>
+                            No students found. <a href="{% url 'student_add' %}">Add one now</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
