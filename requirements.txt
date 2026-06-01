@@ -3,3 +3,5 @@ django-import-export>=4.0
 xhtml2pdf>=0.2.12
 twilio>=9.0
 Pillow>=10.0
+whitenoise>=6.0
+gunicorn>=20.0
